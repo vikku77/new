@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WEARABLE ART – Wear What You Want</title>
+<meta name="description" content="WEARABLE ART, Jalaun UP. Order online and we'll confirm on WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#1f3a5f;      /* deep navy */
+  --brand-dark:#142840;
+  --accent:#e8793a;     /* warm orange */
+  --accent-dark:#cf6628;
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --text:#1c2230;
+  --muted:#6b7385;
+  --line:#e3e6ee;
+  --green:#25d366;
+  --danger:#d64545;
+  --radius:16px;
+  --shadow:0 4px 18px rgba(20,40,64,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding-bottom:110px}
+button{font-family:inherit;cursor:pointer;border:none}
+img{max-width:100%;display:block}
+
+/* Header */
+header{background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;padding:28px 18px 34px;text-align:center;border-bottom-left-radius:28px;border-bottom-right-radius:28px}
+header h1{font-size:1.7rem;letter-spacing:2px;font-weight:700}
+header p.tag{font-size:.95rem;opacity:.9;margin-top:2px;letter-spacing:1px}
+header .loc{display:inline-block;margin-top:12px;background:rgba(255,255,255,.14);padding:4px 14px;border-radius:99px;font-size:.8rem}
+
+/* Filters */
+.filters{display:flex;gap:10px;overflow-x:auto;padding:18px 16px 6px;scrollbar-width:none;max-width:1100px;margin:0 auto}
+.filters::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;background:#fff;color:var(--brand);border:1.5px solid var(--line);padding:8px 18px;border-radius:99px;font-size:.88rem;font-weight:500;transition:.2s}
+.chip.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* Grid */
+main{max-width:1100px;margin:0 auto;padding:12px 16px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,1fr);gap:20px}}
+@media(min-width:980px){.grid{grid-template-columns:repeat(4,1fr)}}
+.card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;animation:fadeUp .5s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.card .imgwrap{aspect-ratio:1/1;background:#eef0f6;overflow:hidden}
+.card img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.card:hover img{transform:scale(1.05)}
+.card .body{padding:12px 12px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.card .cat{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent-dark);font-weight:600}
+.card h3{font-size:.95rem;font-weight:600;line-height:1.3}
+.card p.desc{font-size:.78rem;color:var(--muted);flex:1}
+.card .row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px}
+.price{font-weight:700;font-size:1.05rem;color:var(--brand)}
+.add{background:var(--accent);color:#fff;padding:8px 12px;border-radius:10px;font-size:.8rem;font-weight:600;transition:.15s}
+.add:hover{background:var(--accent-dark)}
+.add:active{transform:scale(.94)}
+.add.added{background:var(--green)}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
+
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:30px 16px}
+footer a{color:var(--brand);font-weight:600;text-decoration:none}
+
+/* Floating buttons */
+.fab{position:fixed;right:16px;width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:50;transition:transform .2s}
+.fab:active{transform:scale(.92)}
+#cartBtn{bottom:18px;background:var(--brand);color:#fff}
+#waBtn{bottom:90px;background:var(--green);color:#fff;text-decoration:none}
+.fab svg{width:28px;height:28px;fill:currentColor}
+#cartCount{position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;font-size:.72rem;font-weight:700;min-width:22px;height:22px;border-radius:99px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--bg)}
+.bump{animation:bump .4s}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(10,18,32,.55);opacity:0;pointer-events:none;transition:.25s;z-index:80;display:flex;align-items:flex-end;justify-content:center}
+.overlay.open{opacity:1;pointer-events:auto}
+.sheet{background:#fff;width:100%;max-width:520px;max-height:92vh;border-radius:24px 24px 0 0;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.overlay.open .sheet{transform:none}
+@media(min-width:600px){.overlay{align-items:center}.sheet{border-radius:24px}}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.sheet-head h2{font-size:1.1rem}
+.close{background:var(--bg);width:34px;height:34px;border-radius:50%;font-size:1.2rem;color:var(--muted)}
+.sheet-body{overflow-y:auto;padding:14px 18px;flex:1}
+.sheet-foot{padding:14px 18px;border-top:1px solid var(--line)}
+.total-row{display:flex;justify-content:space-between;font-weight:700;font-size:1.1rem;margin-bottom:12px}
+.btn{width:100%;padding:14px;border-radius:12px;font-size:1rem;font-weight:600;color:#fff;background:var(--accent);transition:.15s}
+.btn:hover{background:var(--accent-dark)}
+.btn:disabled{opacity:.6}
+.btn.ghost{background:#fff;color:var(--brand);border:1.5px solid var(--line);margin-top:10px}
+.btn.wa{background:var(--green);display:block;text-align:center;text-decoration:none;margin-top:10px}
+
+/* Cart items */
+.item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);animation:fadeUp .3s both}
+.item:last-child{border-bottom:none}
+.item img{width:64px;height:64px;border-radius:10px;object-fit:cover;background:#eef0f6;flex:0 0 auto}
+.item .info{flex:1;min-width:0}
+.item .nm{font-weight:600;font-size:.9rem}
+.item .unit{font-size:.78rem;color:var(--muted)}
+.item .ctrl{display:flex;align-items:center;gap:10px;margin-top:6px}
+.qty{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.qty button{width:32px;height:32px;background:#fff;font-size:1.1rem;color:var(--brand)}
+.qty button:active{background:var(--bg)}
+.qty span{min-width:30px;text-align:center;font-weight:600;font-size:.9rem}
+.rm{background:none;color:var(--danger);font-size:.78rem;text-decoration:underline}
+.sub{font-weight:700;color:var(--brand);font-size:.95rem;white-space:nowrap}
+.empty-cart{text-align:center;color:var(--muted);padding:40px 10px}
+
+/* Form */
+label{display:block;font-size:.82rem;font-weight:600;margin:12px 0 5px}
+label small{font-weight:400;color:var(--muted)}
+input,textarea{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;font-size:.95rem;background:#fff}
+input:focus,textarea:focus{outline:none;border-color:var(--brand)}
+textarea{resize:vertical;min-height:70px}
+.summary-mini{background:var(--bg);border-radius:12px;padding:10px 12px;font-size:.82rem;margin-top:6px}
+.summary-mini div{display:flex;justify-content:space-between;gap:10px}
+.err{color:var(--danger);font-size:.82rem;margin-top:10px;display:none}
+.success{text-align:center;padding:24px 6px}
+.success .tick{width:72px;height:72px;border-radius:50%;background:#e6f8ee;color:#1aa05a;font-size:2.2rem;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;animation:bump .6s}
+.success h3{font-size:1.2rem;margin-bottom:6px}
+.success p{color:var(--muted);font-size:.9rem}
+.toast{position:fixed;left:50%;bottom:100px;transform:translate(-50%,20px);background:var(--brand-dark);color:#fff;padding:10px 18px;border-radius:99px;font-size:.85rem;opacity:0;pointer-events:none;transition:.3s;z-index:90}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="shopName"></h1>
+  <p class="tag" id="shopTag"></p>
+  <span class="loc" id="shopLoc"></span>
+</header>
+
+<nav class="filters" id="filters" aria-label="Product categories"></nav>
+<main><div class="grid" id="grid"></div></main>
+
+<footer>
+  <p>© <span id="yr"></span> <span id="footName"></span> · <span id="footLoc"></span></p>
+  <p style="margin-top:4px">Orders are confirmed by us on WhatsApp · <a id="footWa" href="#">Chat with us</a></p>
+</footer>
+
+<!-- Floating WhatsApp -->
+<a class="fab" id="waBtn" href="#" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32"><path d="M16.04 3C9.4 3 4 8.4 4 15.03c0 2.12.55 4.19 1.6 6.01L4 29l8.1-1.57a12 12 0 0 0 3.94.67C22.68 28.1 28 22.7 28 16.07 28 9.4 22.68 3 16.04 3zm0 22.1c-1.2 0-2.38-.32-3.4-.93l-.24-.15-4.8.93.98-4.67-.16-.25a9.1 9.1 0 0 1-1.4-4.9c0-5.04 4.1-9.14 9.15-9.14 5.04 0 9.14 4.1 9.14 9.14s-4.1 9.97-9.27 9.97zm5.02-6.85c-.28-.14-1.63-.8-1.88-.9-.25-.09-.44-.14-.62.14-.18.27-.7.9-.86 1.08-.16.18-.32.2-.6.07-.27-.14-1.16-.43-2.21-1.36-.82-.73-1.37-1.63-1.53-1.9-.16-.28-.02-.43.12-.57.12-.12.28-.32.41-.48.14-.16.18-.27.27-.46.09-.18.05-.34-.02-.48-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.46-.62-.47h-.53c-.18 0-.48.07-.73.34-.25.27-.96.94-.96 2.3s.98 2.67 1.12 2.85c.14.18 1.93 2.95 4.68 4.13.65.28 1.16.45 1.56.58.66.2 1.25.17 1.72.1.52-.08 1.63-.67 1.86-1.31.23-.64.23-1.19.16-1.31-.07-.11-.25-.18-.53-.32z"/></svg>
+</a>
+
+<!-- Floating Cart -->
+<button class="fab" id="cartBtn" aria-label="Open cart">
+  <svg viewBox="0 0 24 24"><path d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM1 2v2h2l3.6 7.6-1.35 2.45C5.1 14.4 5 14.7 5 15a2 2 0 0 0 2 2h12v-2H7.42a.25.25 0 0 1-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.4-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 20 4H5.21l-.94-2H1z"/></svg>
+  <span id="cartCount">0</span>
+</button>
+
+<!-- Cart / Checkout modal -->
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-head">
+      <h2 id="sheetTitle">Your Cart</h2>
+      <button class="close" id="closeBtn" aria-label="Close">✕</button>
+    </div>
+
+    <!-- Step 1: cart -->
+    <div id="viewCart" style="display:flex;flex-direction:column;min-height:0;flex:1">
+      <div class="sheet-body" id="cartItems"></div>
+      <div class="sheet-foot" id="cartFoot">
+        <div class="total-row"><span>Grand Total</span><span id="grandTotal">₹0</span></div>
+        <button class="btn" id="placeOrderBtn">Place Order</button>
+        <button class="btn ghost" id="clearBtn">Clear Cart</button>
+      </div>
+    </div>
+
+    <!-- Step 2: checkout form -->
+    <form id="orderForm" style="display:none;flex-direction:column;min-height:0;flex:1" method="POST" novalidate>
+      <div class="sheet-body">
+        <div class="summary-mini" id="miniSummary"></div>
+
+        <label for="cName">Your Name *</label>
+        <input id="cName" name="name" type="text" required autocomplete="name" placeholder="Full name">
+
+        <label for="cPhone">Phone Number *</label>
+        <input id="cPhone" name="phone" type="tel" required autocomplete="tel" inputmode="tel" placeholder="10-digit mobile number">
+
+        <label for="cAddr">Delivery Address *</label>
+        <textarea id="cAddr" name="address" required autocomplete="street-address" placeholder="House no., street, area, landmark, pincode"></textarea>
+
+        <label for="cNote">Special Instructions <small>(optional)</small></label>
+        <textarea id="cNote" name="instructions" placeholder="Size, colour, delivery time, etc."></textarea>
+
+        <!-- Hidden fields compiled by JS so the email is fully readable -->
+        <input type="hidden" name="_subject" id="fSubject">
+        <input type="hidden" name="order_summary" id="fSummary">
+        <input type="hidden" name="order_total" id="fTotal">
+        <input type="hidden" name="order_time" id="fTime">
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none">
+
+        <p class="err" id="formErr"></p>
+      </div>
+      <div class="sheet-foot">
+        <button class="btn" type="submit" id="submitBtn">Confirm &amp; Send Order</button>
+        <button class="btn ghost" type="button" id="backBtn">← Back to Cart</button>
+      </div>
+    </form>
+
+    <!-- Step 3: success -->
+    <div id="viewDone" class="sheet-body" style="display:none">
+      <div class="success">
+        <div class="tick">✓</div>
+        <h3>Order placed!</h3>
+        <p id="doneMsg"></p>
+        <a class="btn wa" id="doneWa" href="#" target="_blank" rel="noopener">Message us on WhatsApp</a>
+        <button class="btn ghost" id="doneClose">Continue Shopping</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================
+   SETTINGS — edit this block only
+   ===================================================== */
+const SHOP = {
+  name: "WEARABLE ART",
+  tagline: "WEAR WHAT YOU WANT",
+  location: "Jalaun, UP",
+  phone: "917905017138",                 // WhatsApp number with country code (91 = India), digits only
+  email: "vikkupachipuri128@gmail.com",  // owner email (shown for reference; orders go via Formspree)
+  formspreeUrl: "https://formspree.io/f/mwllrbyp",
+  currency: "₹"
+};
+
+/* Add / edit products here. Categories and filter buttons are built automatically. */
+const PRODUCTS = [
+  { id: 1, name: "Kids Water Bottle",         price: 280, category: "Water Bottles", image: "https://i.ibb.co/hx0f3b0n/product-4.jpg", desc: "Water bottle for kids" },
+  { id: 2, name: "Premium Kids Water Bottle", price: 280, category: "Water Bottles", image: "https://i.ibb.co/1Gyx3rGP/product-3.jpg", desc: "Premium water bottle for kids" },
+  { id: 3, name: "Cute Water Bottle",         price: 280, category: "Water Bottles", image: "https://i.ibb.co/Kz2c5StL/product-2.jpg", desc: "Cute water bottle" }
+];
+/* ===================================================== */
+
+const $ = id => document.getElementById(id);
+const money = n => SHOP.currency + n.toLocaleString("en-IN");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><rect width='100%' height='100%' fill='#eef0f6'/><text x='50%' y='50%' fill='#9aa3b5' font-family='sans-serif' font-size='22' text-anchor='middle'>No image</text></svg>");
+
+/* ---------- Cart state (localStorage) ---------- */
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem("wa_cart") || "[]"); } catch(e){ cart = []; }
+cart = cart.filter(c => PRODUCTS.some(p => p.id === c.id));
+const save = () => { try { localStorage.setItem("wa_cart", JSON.stringify(cart)); } catch(e){} };
+const find = id => PRODUCTS.find(p => p.id === id);
+const totalQty = () => cart.reduce((s,c) => s + c.qty, 0);
+const totalAmt = () => cart.reduce((s,c) => s + c.qty * find(c.id).price, 0);
+
+/* ---------- Header / footer / links ---------- */
+document.title = SHOP.name + " – " + SHOP.tagline;
+$("shopName").textContent = SHOP.name;
+$("shopTag").textContent = SHOP.tagline;
+$("shopLoc").textContent = "📍 " + SHOP.location;
+$("footName").textContent = SHOP.name;
+$("footLoc").textContent = SHOP.location;
+$("yr").textContent = new Date().getFullYear();
+const waLink = (text) => "https://wa.me/" + SHOP.phone + (text ? "?text=" + encodeURIComponent(text) : "");
+$("waBtn").href = waLink("Hi " + SHOP.name + ", I'd like to know more about your products.");
+$("footWa").href = waLink("");
+
+/* ---------- Filters + grid ---------- */
+let activeCat = "All";
+function renderFilters(){
+  const cats = ["All", ...new Set(PRODUCTS.map(p => p.category))];
+  $("filters").innerHTML = cats.map(c =>
+    `<button class="chip ${c===activeCat?"active":""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+}
+function renderGrid(){
+  const list = PRODUCTS.filter(p => activeCat === "All" || p.category === activeCat);
+  $("grid").innerHTML = list.length ? list.map((p,i) => `
+    <article class="card" style="animation-delay:${i*60}ms">
+      <div class="imgwrap"><img src="${esc(p.image)}" alt="${esc(p.name)} – ${esc(p.desc)}" loading="lazy" onerror="this.onerror=null;this.src='${PLACEHOLDER}'"></div>
+      <div class="body">
+        <span class="cat">${esc(p.category)}</span>
+        <h3>${esc(p.name)}</h3>
+        <p class="desc">${esc(p.desc)}</p>
+        <div class="row">
+          <span class="price">${money(p.price)}</span>
+          <button class="add" data-add="${p.id}">Add to Cart</button>
+        </div>
+      </div>
+    </article>`).join("") : `<p class="empty">No products in this category.</p>`;
+}
+$("filters").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if(!b) return;
+  activeCat = b.dataset.cat; renderFilters(); renderGrid();
+});
+$("grid").addEventListener("click", e => {
+  const b = e.target.closest("[data-add]"); if(!b) return;
+  addToCart(+b.dataset.add);
+  b.classList.add("added"); b.textContent = "Added ✓";
+  setTimeout(() => { b.classList.remove("added"); b.textContent = "Add to Cart"; }, 900);
+});
+
+/* ---------- Cart actions ---------- */
+function addToCart(id){
+  const line = cart.find(c => c.id === id);
+  line ? line.qty++ : cart.push({id, qty:1});
+  save(); updateBadge(); toast(find(id).name + " added to cart");
+}
+function changeQty(id, d){
+  const line = cart.find(c => c.id === id); if(!line) return;
+  line.qty += d;
+  if(line.qty <= 0) cart = cart.filter(c => c.id !== id);
+  save(); updateBadge(); renderCart();
+}
+function removeItem(id){ cart = cart.filter(c => c.id !== id); save(); updateBadge(); renderCart(); }
+function updateBadge(){
+  const el = $("cartCount");
+  el.textContent = totalQty();
+  el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+}
+function renderCart(){
+  const box = $("cartItems");
+  if(!cart.length){
+    box.innerHTML = `<div class="empty-cart"><div style="font-size:2.4rem">🛒</div><p style="margin-top:6px">Your cart is empty</p></div>`;
+    $("cartFoot").style.display = "none"; return;
+  }
+  $("cartFoot").style.display = "";
+  box.innerHTML = cart.map(c => {
+    const p = find(c.id);
+    return `<div class="item">
+      <img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
+      <div class="info">
+        <div class="nm">${esc(p.name)}</div>
+        <div class="unit">${money(p.price)} each</div>
+        <div class="ctrl">
+          <div class="qty"><button data-dec="${p.id}" aria-label="Decrease">−</button><span>${c.qty}</span><button data-inc="${p.id}" aria-label="Increase">+</button></div>
+          <button class="rm" data-rm="${p.id}">Remove</button>
+        </div>
+      </div>
+      <div class="sub">${money(c.qty * p.price)}</div>
+    </div>`;
+  }).join("");
+  $("grandTotal").textContent = money(totalAmt());
+}
+$("cartItems").addEventListener("click", e => {
+  const t = e.target;
+  if(t.dataset.inc) changeQty(+t.dataset.inc, 1);
+  else if(t.dataset.dec) changeQty(+t.dataset.dec, -1);
+  else if(t.dataset.rm) removeItem(+t.dataset.rm);
+});
+$("clearBtn").onclick = () => { if(confirm("Remove all items from your cart?")){ cart = []; save(); updateBadge(); renderCart(); } };
+
+/* ---------- Modal navigation ---------- */
+function show(view){
+  $("viewCart").style.display = view==="cart" ? "flex" : "none";
+  $("orderForm").style.display = view==="form" ? "flex" : "none";
+  $("viewDone").style.display = view==="done" ? "block" : "none";
+  $("sheetTitle").textContent = view==="cart" ? "Your Cart" : view==="form" ? "Delivery Details" : "Thank you!";
+}
+function openModal(){ renderCart(); show("cart"); $("overlay").classList.add("open"); $("overlay").setAttribute("aria-hidden","false"); document.body.style.overflow="hidden"; }
+function closeModal(){ $("overlay").classList.remove("open"); $("overlay").setAttribute("aria-hidden","true"); document.body.style.overflow=""; }
+$("cartBtn").onclick = openModal;
+$("closeBtn").onclick = closeModal;
+$("doneClose").onclick = closeModal;
+$("overlay").addEventListener("click", e => { if(e.target === $("overlay")) closeModal(); });
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
+$("backBtn").onclick = () => { renderCart(); show("cart"); };
+
+/* ---------- Order text (used for email + WhatsApp) ---------- */
+function buildSummary(){
+  const lines = cart.map((c,i) => {
+    const p = find(c.id);
+    return `${i+1}. ${p.name} — ${c.qty} x ${money(p.price)} = ${money(c.qty*p.price)}`;
+  });
+  return lines.join("\n") + "\n------------------------------\nGRAND TOTAL: " + money(totalAmt());
+}
+
+$("placeOrderBtn").onclick = () => {
+  if(!cart.length) return;
+  $("miniSummary").innerHTML = cart.map(c => {
+    const p = find(c.id);
+    return `<div><span>${esc(p.name)} × ${c.qty}</span><span>${money(c.qty*p.price)}</span></div>`;
+  }).join("") + `<div style="font-weight:700;margin-top:6px;border-top:1px solid var(--line);padding-top:6px"><span>Total</span><span>${money(totalAmt())}</span></div>`;
+  $("formErr").style.display = "none";
+  show("form");
+};
+
+/* ---------- Submit to Formspree ---------- */
+$("orderForm").action = SHOP.formspreeUrl;
+$("orderForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const err = $("formErr");
+  const name = $("cName").value.trim(), phone = $("cPhone").value.trim(), addr = $("cAddr").value.trim(), note = $("cNote").value.trim();
+  const showErr = m => { err.textContent = m; err.style.display = "block"; };
+
+  if(!cart.length) return showErr("Your cart is empty.");
+  if(!name) return showErr("Please enter your name.");
+  if(!/^[+\d][\d\s-]{8,14}$/.test(phone)) return showErr("Please enter a valid phone number.");
+  if(!addr) return showErr("Please enter your delivery address.");
+  err.style.display = "none";
+
+  const summary = buildSummary();
+  const total = money(totalAmt());
+  const when = new Date().toLocaleString("en-IN", {dateStyle:"medium", timeStyle:"short"});
+  $("fSubject").value = `New Order from ${name} – ${total}`;
+  $("fSummary").value = summary;
+  $("fTotal").value = total;
+  $("fTime").value = when;
+
+  const btn = $("submitBtn");
+  btn.disabled = true; btn.textContent = "Sending…";
+
+  const waText = `Hi ${SHOP.name}, I'd like to place this order:\n\n${summary}\n\nName: ${name}\nPhone: ${phone}\nAddress: ${addr}` + (note ? `\nNote: ${note}` : "");
+
+  try{
+    const res = await fetch(SHOP.formspreeUrl, {
+      method: "POST",
+      headers: { "Accept": "application/json" },
+      body: new FormData($("orderForm"))
+    });
+    if(!res.ok) throw new Error("Formspree error " + res.status);
+
+    cart = []; save(); updateBadge();
+    $("orderForm").reset();
+    $("doneMsg").textContent = `Order placed! ${SHOP.name} will contact you on WhatsApp to confirm.`;
+    $("doneWa").href = waLink(`Hi ${SHOP.name}, I just placed an order (${total}) under the name ${name}.`);
+    show("done");
+  }catch(ex){
+    showErr("Couldn't send the order right now. Please tap below to send it on WhatsApp instead.");
+    if(!$("waFallback")){
+      const a = document.createElement("a");
+      a.id = "waFallback"; a.className = "btn wa"; a.target = "_blank"; a.rel = "noopener";
+      a.textContent = "Send Order via WhatsApp";
+      err.insertAdjacentElement("afterend", a);
+    }
+    $("waFallback").href = waLink(waText);
+  }finally{
+    btn.disabled = false; btn.textContent = "Confirm & Send Order";
+  }
+});
+
+/* ---------- Toast ---------- */
+let tt;
+function toast(msg){
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 1600);
+}
+
+/* ---------- Init ---------- */
+renderFilters(); renderGrid(); $("cartCount").textContent = totalQty();
+</script>
+</body>
+</html>
